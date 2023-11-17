@@ -1,7 +1,6 @@
 let autoClickerInterval;
-let mousePosition = { x: 0, y: 0 }; // Initialisiere mousePosition
+let mousePosition = { x: 0, y: 0 };
 
-// Event-Listener für Mausbewegungen
 document.addEventListener('mousemove', (event) => {
   mousePosition.x = event.clientX;
   mousePosition.y = event.clientY;
@@ -15,28 +14,21 @@ function simulateClick() {
   }
 }
 
-// Funktion, um den AutoClicker zu starten
 function startAutoClicker() {
-  if (!autoClickerInterval) { // Starte nur, wenn noch nicht aktiv
+  if (!autoClickerInterval) { // Start, if not active
     console.log("start AutoClicker");
-    autoClickerInterval = setInterval(simulateClick, 2);
+    autoClickerInterval = setInterval(simulateClick, 1);
   }
 }
 
-// Funktion, um den AutoClicker zu stoppen
 function stopAutoClicker() {
-  if (autoClickerInterval) { // Stoppe nur, wenn aktiv
+  if (autoClickerInterval) { // Stop, if active
     console.log("stop AutoClicker");
     clearInterval(autoClickerInterval);
-    autoClickerInterval = null;
   }
 }
 
-// Listener für Nachrichten von der Erweiterung
+// Listener for messages from auto clicker
 chrome.runtime.onMessage.addListener((message) => {
-  if (message.autoClickerEnabled) {
-    startAutoClicker();
-  } else {
-    stopAutoClicker();
-  }
+  message.autoClickerEnabled ? startAutoClicker() : stopAutoClicker();
 });
