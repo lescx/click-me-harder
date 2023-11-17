@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Autoclicker",
   "description": "An auto clicker that doesn't suck.",
-  "version": "0.1",
+  "version": "0.1.1",
   "author": "git@les.cx",
   "homepage_url": "https://www.les.cx",
   "permissions": [
