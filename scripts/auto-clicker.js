@@ -1,34 +1,27 @@
-let autoClickerInterval;
-let mousePosition = { x: 0, y: 0 };
+if (typeof autoClickerInit === 'undefined') {
+  let autoClickerInterval;
+  let mousePosition = { x: 0, y: 0 };
+  const autoClickerInit = true; // Flag to prevent re-initialization
 
-document.addEventListener('mousemove', (event) => {
-  mousePosition.x = event.clientX;
-  mousePosition.y = event.clientY;
-});
+  document.addEventListener('mousemove', (event) => {
+    mousePosition.x = event.clientX;
+    mousePosition.y = event.clientY;
+  });
 
-function simulateClick() {
-  console.log("Simulate click");
-  let element = document.elementFromPoint(mousePosition.x, mousePosition.y);
-  if (element) {
-    element.click();
+  function simulateClick() {
+    const element = document.elementFromPoint(mousePosition.x, mousePosition.y);
+    element?.click();
   }
-}
 
-function startAutoClicker() {
-  if (!autoClickerInterval) { // Start, if not active
-    console.log("start AutoClicker");
+  function startAutoClicker() {
     autoClickerInterval = setInterval(simulateClick, 1);
   }
-}
 
-function stopAutoClicker() {
-  if (autoClickerInterval) { // Stop, if active
-    console.log("stop AutoClicker");
+  function stopAutoClicker() {
     clearInterval(autoClickerInterval);
   }
-}
 
-// Listener for messages from auto clicker
-chrome.runtime.onMessage.addListener((message) => {
-  message.autoClickerEnabled ? startAutoClicker() : stopAutoClicker();
-});
+  chrome.runtime.onMessage.addListener((message) => {
+    message.autoClickerEnabled ? startAutoClicker() : stopAutoClicker();
+  });
+}
