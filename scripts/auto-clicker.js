@@ -1,3 +1,5 @@
+"use strict";
+
 if (typeof autoClickerInit === 'undefined') {
   let autoClickerInterval;
   let mousePosition = { x: 0, y: 0 };
