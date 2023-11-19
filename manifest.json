@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Click Me Harder",
   "description": "An auto clicker that doesn't suck.",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "author": "git@les.cx",
   "homepage_url": "https://www.les.cx",
   "icons": {
@@ -22,10 +22,16 @@
     "service_worker": "service-worker.js"
   },
   "commands": {
-    "toggle-auto-clicker": {
-      "description": "Toggle auto clicker",
+    "follow_mouse_mode": {
+      "description": "Toggle follow mouse mode",
       "suggested_key": {
         "default": "Alt+N"
+      }
+    },
+    "specific_location_mode": {
+      "description": "Toggle specific location mode",
+      "suggested_key": {
+        "default": "Alt+M"
       }
     }
   }

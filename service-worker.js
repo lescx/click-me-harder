@@ -78,13 +78,13 @@ chrome.contextMenus.create({
 // to the "toggle-auto-clicker" command. When this command is triggered,
 // it calls toggleEnableExtension to toggle the state of the auto-clicker.
 chrome.commands.onCommand.addListener(async (command) => {
-  if (command === "toggle-auto-clicker") {
-    await toggleEnableExtension();
+  if (command === "follow_mouse_mode") {
+    await toggleEnableExtension(); // TODO: Handle two modes
   }
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId === "specificLocationMode" | info.menuItemId === "followMouseMode") {
+  if (info.menuItemId === "specificLocationMode" || info.menuItemId === "followMouseMode") {
     await toggleEnableExtension();
   }
 });
