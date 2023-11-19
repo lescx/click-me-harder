@@ -57,14 +57,21 @@ async function toggleEnableExtension() {
 chrome.contextMenus.create({
   id: "autoClicker",
   title: "Auto Clicker",
-  contexts: ["all"]
+  contexts: ['all']
 });
 
 chrome.contextMenus.create({
-  id: "specificLocation",
-  title: "[Placeholder] Click Location",
+  id: "followMouseMode",
+  title: "Follow mouse",
   parentId: "autoClicker",
-  contexts: ["all"]
+  contexts: ['all']
+});
+
+chrome.contextMenus.create({
+  id: "fixLocationMode",
+  title: "Fix location",
+  parentId: "autoClicker",
+  contexts: ['all']
 });
 
 // The listener for Chrome commands is set up to respond
@@ -77,7 +84,7 @@ chrome.commands.onCommand.addListener(async (command) => {
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId === "specificLocation") {
+  if (info.menuItemId === "specificLocationMode" | info.menuItemId === "followMouseMode") {
     await toggleEnableExtension();
   }
 });

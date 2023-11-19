@@ -25,7 +25,7 @@
     "toggle-auto-clicker": {
       "description": "Toggle auto clicker",
       "suggested_key": {
-        "default": "Alt+Shift+K"
+        "default": "Alt+N"
       }
     }
   }
