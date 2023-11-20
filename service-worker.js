@@ -40,10 +40,9 @@ async function injectScriptIfNeeded(tabId) {
   }
 }
 
-// This async function toggles the state of the extension.
+// toggleEnableExtension() toggles the state of the extension.
 // It sends a message with { toggle: true } to the content script
-// running in the current tab. This approach simplifies the logic
-// by not requiring the service worker to keep track of the auto-clicker's state.
+// running in the current tab.
 async function toggleEnableExtension() {
   let currentTabId = await getCurrentTabId();
   if (currentTabId) {
@@ -54,29 +53,25 @@ async function toggleEnableExtension() {
   };
 }
 
-// Utility function to safely create a context menu item.
-// It tries to create the item and catches the error if the item already exists.
-function createContextMenu(id, title, parentId = null) {
-  try {
-    chrome.contextMenus.create({
-      id: id,
-      title: title,
-      contexts: ['all'],
-      parentId: parentId
-    });
-  } catch (error) {
-    if (error.message.includes('Cannot create item with duplicate id')) {
-      console.log(`Context menu item with id '${id}' already exists.`);
-    } else {
-      throw error; // Rethrow other unexpected errors.
-    }
-  }
-}
+chrome.contextMenus.create({
+  id: "autoClicker",
+  title: "Auto Clicker",
+  contexts: ['all']
+});
 
-// Create the main context menu and its children using the safe utility function.
-createContextMenu("autoClicker", "Auto Clicker");
-createContextMenu("followMouseMode", "Follow mouse", "autoClicker");
-createContextMenu("fixLocationMode", "Fix location", "autoClicker");
+chrome.contextMenus.create({
+  id: "followMouseMode",
+  title: "Follow mouse",
+  parentId: "autoClicker",
+  contexts: ['all']
+});
+
+chrome.contextMenus.create({
+  id: "fixLocationMode",
+  title: "Fix location",
+  parentId: "autoClicker",
+  contexts: ['all']
+});
 
 // The listener for Chrome commands is set up to respond
 // to the "toggle-auto-clicker" command. When this command is triggered,
