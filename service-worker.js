@@ -53,25 +53,28 @@ async function toggleEnableExtension() {
   };
 }
 
-chrome.contextMenus.create({
-  id: "autoClicker",
-  title: "Auto Clicker",
-  contexts: ['all']
+chrome.runtime.onInstalled.addListener(function() {
+  chrome.contextMenus.create({
+    id: "autoClicker",
+    title: "Auto Clicker",
+    contexts: ['all']
+  });
+
+  chrome.contextMenus.create({
+    id: "followMouseMode",
+    title: "Follow mouse",
+    parentId: "autoClicker",
+    contexts: ['all']
+  });
+
+  chrome.contextMenus.create({
+    id: "fixLocationMode",
+    title: "Fix location",
+    parentId: "autoClicker",
+    contexts: ['all']
+  });
 });
 
-chrome.contextMenus.create({
-  id: "followMouseMode",
-  title: "Follow mouse",
-  parentId: "autoClicker",
-  contexts: ['all']
-});
-
-chrome.contextMenus.create({
-  id: "fixLocationMode",
-  title: "Fix location",
-  parentId: "autoClicker",
-  contexts: ['all']
-});
 
 // The listener for Chrome commands is set up to respond
 // to the "toggle-auto-clicker" command. When this command is triggered,
