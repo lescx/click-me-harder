@@ -28,7 +28,7 @@
         "default": "Alt+N"
       }
     },
-    "specific_location_mode": {
+    "fixed_location_mode": {
       "description": "Toggle specific location mode",
       "suggested_key": {
         "default": "Alt+M"

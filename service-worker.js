@@ -1,16 +1,27 @@
 "use strict";
 
-// getCurrentTabId() retrieves the ID of the currently active tab
-// in the last focused window,
-// which is necessary for sending messages to the correct tab.
-async function getCurrentTabId() {
-  try {
-    return (await chrome.tabs.query({ active: true, lastFocusedWindow: true }))[0]?.id;
-  } catch (err) {
-    console.error("error getting current tab ID: ", err);
-    return null;
-  }
-}
+chrome.runtime.onInstalled.addListener(function() {
+  chrome.contextMenus.create({
+    id: "autoClicker",
+    title: "Auto Clicker",
+    contexts: ['all']
+  });
+
+  chrome.contextMenus.create({
+    id: "followMouseMode",
+    title: "Follow mouse",
+    parentId: "autoClicker",
+    contexts: ['all']
+  });
+
+  chrome.contextMenus.create({
+    id: "fixedLocationMode",
+    title: "Fix location",
+    parentId: "autoClicker",
+    contexts: ['all']
+  });
+});
+
 
 // This function injects the auto-clicker script into the specified tab
 // if it's not already injected.
@@ -28,65 +39,43 @@ async function injectScriptIfNeeded(tabId) {
         target: { tabId },
         files: ['scripts/auto-clicker.js'],
       });
-
-      // After successful injection, mark the script as injected
-      await chrome.scripting.executeScript({
-        target: { tabId },
-        function: () => { window.autoClickerInjected = true; },
-      });
     }
   } catch (err) {
     console.error("Failed to inject or check script: ", err);
   }
 }
 
-// toggleEnableExtension() toggles the state of the extension.
-// It sends a message with { toggle: true } to the content script
-// running in the current tab.
-async function toggleEnableExtension() {
-  let currentTabId = await getCurrentTabId();
-  if (currentTabId) {
-    await injectScriptIfNeeded(currentTabId);
-    chrome.tabs.sendMessage(currentTabId, { toggle: true }).catch(err =>
-      console.error("failed to send message: ", err)
-    );
-  };
+// getCurrentTabId() retrieves the ID of the currently active tab
+// in the last focused window,
+// which is necessary for sending messages to the correct tab.
+async function getCurrentTabId() {
+  try {
+    return (await chrome.tabs.query({ active: true, lastFocusedWindow: true }))[0]?.id;
+  } catch (err) {
+    console.error("error getting current tab ID: ", err);
+    return null;
+  }
 }
 
-chrome.runtime.onInstalled.addListener(function() {
-  chrome.contextMenus.create({
-    id: "autoClicker",
-    title: "Auto Clicker",
-    contexts: ['all']
-  });
+async function toggleAutoClickerMode(tabId, mode) {
+  await injectScriptIfNeeded(tabId);
+  chrome.tabs.sendMessage(tabId, { mode }).catch(err =>
+    console.error("failed to send message: ", err)
+  );
+}
 
-  chrome.contextMenus.create({
-    id: "followMouseMode",
-    title: "Follow mouse",
-    parentId: "autoClicker",
-    contexts: ['all']
-  });
-
-  chrome.contextMenus.create({
-    id: "fixLocationMode",
-    title: "Fix location",
-    parentId: "autoClicker",
-    contexts: ['all']
-  });
-});
-
-
-// The listener for Chrome commands is set up to respond
-// to the "toggle-auto-clicker" command. When this command is triggered,
-// it calls toggleEnableExtension to toggle the state of the auto-clicker.
 chrome.commands.onCommand.addListener(async (command) => {
-  if (command === "follow_mouse_mode") {
-    await toggleEnableExtension(); // TODO: Handle two modes
+  let currentTabId = await getCurrentTabId();
+  if (currentTabId) {
+    let mode = command === "follow_mouse_mode" ? "followMouse" : "fixedLocation";
+    await toggleAutoClickerMode(currentTabId, mode);
   }
 });
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId === "specificLocationMode" || info.menuItemId === "followMouseMode") {
-    await toggleEnableExtension();
+  let currentTabId = await getCurrentTabId();
+  if (currentTabId) {
+    let mode = info.menuItemId === "fixedLocationMode" ? "fixedLocation" : "followMouse";
+    await toggleAutoClickerMode(currentTabId, mode);
   }
 });
