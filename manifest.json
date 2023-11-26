@@ -25,13 +25,13 @@
     "follow_mouse_mode": {
       "description": "Toggle follow mouse mode",
       "suggested_key": {
-        "default": "Alt+N"
+        "default": "Alt+M"
       }
     },
     "fixed_location_mode": {
       "description": "Toggle specific location mode",
       "suggested_key": {
-        "default": "Alt+M"
+        "default": "Alt+N"
       }
     }
   }

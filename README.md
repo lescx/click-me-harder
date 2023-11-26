@@ -1,7 +1,5 @@
 # Click Me Harder
 
-> An auto clicker that doesn't suck.
-
 **Click Me Harder** is a *[suckless](https://suckless.org/philosophy)* auto clicker extension for Chromium-based browsers, leveraging [Manifest V3](https://developer.chrome.com/docs/extensions/mv3/intro).
 
 ## Table of Contents

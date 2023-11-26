@@ -22,7 +22,6 @@ chrome.runtime.onInstalled.addListener(function() {
   });
 });
 
-
 // This function injects the auto-clicker script into the specified tab
 // if it's not already injected.
 async function injectScriptIfNeeded(tabId) {
@@ -64,6 +63,7 @@ async function toggleAutoClickerMode(tabId, mode) {
   );
 }
 
+// Switch mode with keyboard shortcut defined in manifest.json
 chrome.commands.onCommand.addListener(async (command) => {
   let currentTabId = await getCurrentTabId();
   if (currentTabId) {
@@ -72,6 +72,7 @@ chrome.commands.onCommand.addListener(async (command) => {
   }
 });
 
+// Switch mode from context menu
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   let currentTabId = await getCurrentTabId();
   if (currentTabId) {
