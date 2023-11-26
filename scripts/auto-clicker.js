@@ -6,58 +6,62 @@ window.autoClickerInjected = true;
 let isEnabled = false;
 let autoClickerInterval; // is set to the return value of setInterval(); 4ms for on, null for off
 let mousePosition = { x: 0, y: 0 };
+let staticElement = null;
 let currentMode = null;
 
 document.addEventListener('mousemove', (event) => {
-  if (isEnabled && currentMode === "followMouse" || currentMode === "fixedLocation") {
+  // TODO:
+  // if currentMode === "staticLocation", this shouldn't be needed.
+  // Instead, I should add a mouseclick listener.
+  if (isEnabled && currentMode === "followMouse" || currentMode === "staticLocation") {
     mousePosition.x = event.clientX;
     mousePosition.y = event.clientY;
   }
 });
 
-// TODO:
-// Hier ist eine Optimierung möglich, in dem man nicht immer wieder das Element
-// sucht unter dem Cursor. Insbesondere bei dem fixedLocation mode, muss das
-// Element nur einmal gesucht werden.
-function simulateClickAtPosition(x, y) {
-  const element = document.elementFromPoint(x, y);
-  element?.click();
-}
-
 // Mode which simulates a click every 4ms under the mouse cursor
 function followMouseMode() {
-  simulateClickAtPosition(mousePosition.x, mousePosition.y);
+  const element = document.elementFromPoint(mousePosition.x, mousePosition.y);
+  element?.click();
 }
 
 // User clicks position after enabling this mode and
 // it then autoclicks at the position
-function fixedLocationMode(fixedCoordinate) {
-  simulateClickAtPosition(fixedCoordinate.x, fixedCoordinate.y); // for some reason, these coordinates are 0 0 here.
+function staticLocationMode(staticCoordinate) {
+  if (!staticElement) {
+    // TODO:
+    // staticElement sollte eigentlich definiert werden als der erste Klick,
+    // sobald der staticLocation mode aktiviert wurde.
+    staticElement = document.elementFromPoint(staticCoordinate.x, staticCoordinate.y);
+  }
+  staticElement?.click();
+}
+
+function resetstaticLocationMode() {
+  staticElement = null;
 }
 
 function startAutoClicker() {
-  const modeFunction = currentMode === "followMouse" ? followMouseMode : fixedLocationMode;
-  console.log("started auto clicker (mode: " + currentMode + ")");
+  const modeFunction = currentMode === "followMouse" ? followMouseMode : staticLocationMode;
 
-  if (currentMode === "fixedLocation") {
-    let fixedCoordinates = { x: mousePosition.x, y: mousePosition.y };
-    console.log(fixedCoordinates);
-    autoClickerInterval = setInterval(() => fixedLocationMode(fixedCoordinates), 4);
-  } else {
+  if (currentMode === "staticLocation") {
+    let staticCoordinates = { x: mousePosition.x, y: mousePosition.y };
+    autoClickerInterval = setInterval(() => staticLocationMode(staticCoordinates), 4);
+  }
+
+  if (currentMode === "followMouse") {
     autoClickerInterval = setInterval(modeFunction, 4);
   }
 }
 
 function stopAutoClicker() {
-  console.log("stopped auto clicker (mode: " + currentMode + ")");
-
+  if (currentMode === "staticLocation") { resetstaticLocationMode(); }
   clearInterval(autoClickerInterval);
   autoClickerInterval = null;
 }
 
 chrome.runtime.onMessage.addListener((message) => {
   if (message.mode) {
-    // If the auto-clicker is currently enabled
     if (isEnabled) {
       // Stop the auto-clicker if the same mode is reselected or if changing modes
       stopAutoClicker();

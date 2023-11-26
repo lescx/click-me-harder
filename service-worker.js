@@ -3,20 +3,30 @@
 chrome.runtime.onInstalled.addListener(function() {
   chrome.contextMenus.create({
     id: "autoClicker",
-    title: "Auto Clicker",
+    title: "Toggle auto clicker mode",
+    contexts: ['all']
+  });
+
+  chrome.contextMenus.create({
+    id: "stopAutoClickerMode",
+    title: "Stop auto clicker",
+    type: 'radio',
+    parentId: "autoClicker",
     contexts: ['all']
   });
 
   chrome.contextMenus.create({
     id: "followMouseMode",
     title: "Follow mouse",
+    type: 'radio',
     parentId: "autoClicker",
     contexts: ['all']
   });
 
   chrome.contextMenus.create({
-    id: "fixedLocationMode",
-    title: "Fix location",
+    id: "staticLocationMode",
+    title: "Static location",
+    type: 'radio',
     parentId: "autoClicker",
     contexts: ['all']
   });
@@ -67,7 +77,7 @@ async function toggleAutoClickerMode(tabId, mode) {
 chrome.commands.onCommand.addListener(async (command) => {
   let currentTabId = await getCurrentTabId();
   if (currentTabId) {
-    let mode = command === "follow_mouse_mode" ? "followMouse" : "fixedLocation";
+    let mode = command === "staticLocationMode" ? "staticLocation" : "followMouse";
     await toggleAutoClickerMode(currentTabId, mode);
   }
 });
@@ -76,7 +86,7 @@ chrome.commands.onCommand.addListener(async (command) => {
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   let currentTabId = await getCurrentTabId();
   if (currentTabId) {
-    let mode = info.menuItemId === "fixedLocationMode" ? "fixedLocation" : "followMouse";
+    let mode = info.menuItemId === "staticLocationMode" ? "staticLocation" : "followMouse";
     await toggleAutoClickerMode(currentTabId, mode);
   }
 });
